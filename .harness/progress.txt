@@ -1,0 +1,88 @@
+# 项目进度日志
+
+项目创建时间：2026-04-23T17:15:00Z
+总任务数：23
+
+---
+
+## 任务概览
+
+| ID | 标题 | 优先级 | 依赖 | 状态 |
+|----|------|--------|------|------|
+| T001 | 后端项目初始化与数据库建表 | high | - | pending |
+| T002 | 后端认证模块（JWT 登录接口） | high | T001 | pending |
+| T003 | 后端文件上传模块 | high | T002 | pending |
+| T004 | 后端留言模块 API | high | T002 | pending |
+| T005 | 后端服务模块 API | high | T002 | pending |
+| T006 | 后端新闻模块 API | high | T002 | pending |
+| T007 | 后端轮播图模块 API | high | T002 | pending |
+| T008 | 后端站点设置与仪表盘 API | high | T002 | pending |
+| T009 | 后台 CMS 项目初始化 | high | T002 | pending |
+| T010 | 后台仪表盘页面 | medium | T008, T009 | pending |
+| T011 | 后台轮播图管理页面 | high | T007, T009 | pending |
+| T012 | 后台服务管理页面 | high | T005, T009 | pending |
+| T013 | 后台新闻管理页面 | high | T006, T009 | pending |
+| T014 | 后台留言管理页面 | high | T004, T009 | pending |
+| T015 | 后台站点设置页面 | medium | T008, T009 | pending |
+| T016 | 前台官网项目初始化 | high | T001 | pending |
+| T017 | 前台首页 | high | T005-T008, T016 | pending |
+| T018 | 前台服务列表和服务详情页 | high | T005, T016 | pending |
+| T019 | 前台新闻列表和新闻详情页 | high | T006, T016 | pending |
+| T020 | 前台在线留言页 | high | T004, T008, T016 | pending |
+| T021 | SEO meta 标签动态渲染 | medium | T008, T016 | pending |
+| T022 | 后台留言未读角标通知 | medium | T008, T009, T014 | pending |
+| T023 | 部署配置 | medium | T015, T017 | pending |
+
+---
+
+## 2026-04-23T09:51:41.361Z — 任务 T001
+
+状态：completed
+详情：任务通过验收
+
+评估完成（未生成详细报告）
+
+
+---
+
+## 2026-04-23T10:04:28.044Z — 任务 T002
+
+状态：completed
+详情：任务通过验收
+
+评估完成（未生成详细报告）
+
+
+---
+
+## 2026-04-23T10:22:46.949Z — 任务 T003
+
+状态：completed
+详情：任务通过验收
+
+评估完成（未生成详细报告）
+
+
+---
+
+## 2026-04-23T10:35:00.000Z — 任务 T004
+
+状态：completed
+详情：后端留言模块 API 实现完成
+
+实现内容：
+- server/routes/messages.js 已包含三个接口：
+  1. POST /api/messages — 公开提交留言，参数校验（name/phone/content 必填，长度限制），插入数据库返回 id
+  2. GET /api/messages — 鉴权分页列表，支持 page/pageSize 查询参数，返回 total 和 list（含 id, name, phone, content, is_read, created_at）
+  3. PUT /api/messages/:id/read — 鉴权标记已处理，先检查留言存在性再更新 is_read=1
+
+验证结果：
+- AC001 ✅ 前台提交留言成功，返回 code=0 且 data.id 存在
+- AC002 ✅ 参数校验，缺少 name 返回 code=400 且提示参数错误
+- AC003 ✅ 后台分页获取留言列表，返回 total 和 list，字段完整
+- AC004 ✅ 标记留言已处理，返回 code=0，再次查询 is_read=1
+
+注：messages.js 路由文件在之前任务中已创建，本次验证确认功能完整
+
+
+---

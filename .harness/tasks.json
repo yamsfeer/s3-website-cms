@@ -1,0 +1,1051 @@
+{
+  "project": {
+    "name": "万家官网管家",
+    "version": "1.0.0",
+    "created_at": "2026-04-23T17:15:00Z"
+  },
+  "tasks": [
+    {
+      "id": "T001",
+      "title": "后端项目初始化与数据库建表",
+      "category": "infrastructure",
+      "priority": "high",
+      "description": "初始化 Express 项目结构，安装核心依赖（express, better-sqlite3, jsonwebtoken, bcryptjs, multer, cors），创建数据库连接模块，执行建表 SQL（users, banners, services, news, messages, settings），插入种子数据（默认管理员 + 示例数据）",
+      "acceptance_criteria": [
+        {
+          "id": "AC001",
+          "description": "Express 服务可以正常启动",
+          "steps": [
+            "进入 server/ 目录",
+            "运行 npm install 安装依赖",
+            "运行 node index.js 启动服务",
+            "访问 http://localhost:3000/api/services 返回 { code: 0, data: [...] }"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC002",
+          "description": "数据库表和种子数据创建成功",
+          "steps": [
+            "启动 Express 服务",
+            "检查 data/ 目录下生成 app.db 文件",
+            "查看服务启动日志确认建表成功",
+            "访问 GET /api/services 返回包含种子数据的列表"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC003",
+          "description": "统一响应格式和错误处理中间件工作正常",
+          "steps": [
+            "访问一个不存在的 API 路径如 GET /api/not-exist",
+            "验证返回 { code: 404, msg: 'Not Found' } 格式",
+            "访问 GET /api/services 验证返回 { code: 0, data: [...], msg: 'ok' } 格式"
+          ],
+          "status": "pending"
+        }
+      ],
+      "dependencies": [],
+      "attempts": 0,
+      "status": "completed",
+      "notes": [],
+      "completed_at": "2026-04-23T09:51:41.360Z"
+    },
+    {
+      "id": "T002",
+      "title": "后端认证模块（JWT 登录接口）",
+      "category": "functional",
+      "priority": "high",
+      "description": "实现 POST /api/auth/login 接口，验证用户名密码，签发 JWT Token；实现 JWT 验证中间件供其他鉴权接口使用",
+      "acceptance_criteria": [
+        {
+          "id": "AC001",
+          "description": "使用正确凭证可以登录获取 Token",
+          "steps": [
+            "发送 POST /api/auth/login，body: { username: 'admin', password: 'admin123' }",
+            "验证返回 code=0 且 data 包含 token 和 username 字段",
+            "验证 token 是合法的 JWT 格式（三段式 base64）"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC002",
+          "description": "使用错误凭证返回 401",
+          "steps": [
+            "发送 POST /api/auth/login，body: { username: 'admin', password: 'wrong' }",
+            "验证返回 code=401 且无 token 字段"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC003",
+          "description": "JWT 鉴权中间件拦截无 Token 请求",
+          "steps": [
+            "发送 GET /api/messages（不带 Authorization header）",
+            "验证返回 code=401",
+            "发送 GET /api/messages，带 Authorization: Bearer <有效token>",
+            "验证返回 code=0 且包含留言数据"
+          ],
+          "status": "pending"
+        }
+      ],
+      "dependencies": [
+        "T001"
+      ],
+      "attempts": 0,
+      "status": "completed",
+      "notes": [],
+      "completed_at": "2026-04-23T10:04:28.043Z"
+    },
+    {
+      "id": "T003",
+      "title": "后端文件上传模块",
+      "category": "functional",
+      "priority": "high",
+      "description": "实现 POST /api/upload 接口，使用 multer 处理 multipart/form-data 文件上传，文件类型白名单（jpg/png/gif/webp），大小限制 5MB，时间戳重命名存储到 uploads/ 目录",
+      "acceptance_criteria": [
+        {
+          "id": "AC001",
+          "description": "上传合法图片成功返回 URL",
+          "steps": [
+            "使用有效 Token 发送 POST /api/upload，携带一张 jpg 图片（<5MB）",
+            "验证返回 code=0 且 data.url 以 /uploads/ 开头",
+            "检查 uploads/ 目录下存在对应文件"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC002",
+          "description": "上传不支持的文件类型被拒绝",
+          "steps": [
+            "使用有效 Token 发送 POST /api/upload，携带一个 .txt 文件",
+            "验证返回错误码（非0）且提示文件类型不支持"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC003",
+          "description": "未鉴权请求被拦截",
+          "steps": [
+            "发送 POST /api/upload 不带 Token",
+            "验证返回 code=401"
+          ],
+          "status": "pending"
+        }
+      ],
+      "dependencies": [
+        "T002"
+      ],
+      "attempts": 0,
+      "status": "completed",
+      "notes": [],
+      "completed_at": "2026-04-23T10:22:46.948Z"
+    },
+    {
+      "id": "T004",
+      "title": "后端留言模块 API",
+      "category": "functional",
+      "priority": "high",
+      "description": "实现留言相关 API：POST /api/messages（公开提交）、GET /api/messages（鉴权分页列表）、PUT /api/messages/:id/read（鉴权标记已处理）",
+      "acceptance_criteria": [
+        {
+          "id": "AC001",
+          "description": "前台提交留言成功",
+          "steps": [
+            "发送 POST /api/messages，body: { name: '测试用户', phone: '13800138000', content: '咨询保洁服务' }，无需 Token",
+            "验证返回 code=0 且 data.id 存在"
+          ],
+          "status": "pass"
+        },
+        {
+          "id": "AC002",
+          "description": "留言参数校验",
+          "steps": [
+            "发送 POST /api/messages，body 缺少 name 字段",
+            "验证返回 code=400 且提示参数错误"
+          ],
+          "status": "pass"
+        },
+        {
+          "id": "AC003",
+          "description": "后台分页获取留言列表",
+          "steps": [
+            "使用有效 Token 发送 GET /api/messages?page=1&pageSize=10",
+            "验证返回 code=0，data 包含 total 和 list 字段",
+            "验证 list 是数组且每条包含 id, name, phone, content, is_read, created_at"
+          ],
+          "status": "pass"
+        },
+        {
+          "id": "AC004",
+          "description": "标记留言已处理",
+          "steps": [
+            "使用有效 Token 发送 PUT /api/messages/1/read",
+            "验证返回 code=0",
+            "再次获取留言列表，验证该留言 is_read=1"
+          ],
+          "status": "pass"
+        }
+      ],
+      "dependencies": [
+        "T002"
+      ],
+      "attempts": 0,
+      "status": "completed",
+      "notes": [],
+      "completed_at": "2026-04-23T10:35:00.000Z"
+    },
+    {
+      "id": "T005",
+      "title": "后端服务模块 API",
+      "category": "functional",
+      "priority": "high",
+      "description": "实现服务 CRUD API：GET /api/services（前台公开列表）、GET /api/services/:id（前台公开详情）、POST /api/services（新增）、PUT /api/services/:id（编辑）、DELETE /api/services/:id（删除）",
+      "acceptance_criteria": [
+        {
+          "id": "AC001",
+          "description": "前台获取活跃服务列表",
+          "steps": [
+            "发送 GET /api/services 无需 Token",
+            "验证返回 code=0，data 是数组",
+            "验证每条数据包含 id, title, icon, summary, detail 字段",
+            "验证仅返回 is_active=1 的数据"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC002",
+          "description": "后台新增服务",
+          "steps": [
+            "使用有效 Token 发送 POST /api/services，body: { title: '测试服务', summary: '简介' }",
+            "验证返回 code=0 且 data.id 存在",
+            "再次获取列表验证新服务出现"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC003",
+          "description": "后台编辑和删除服务",
+          "steps": [
+            "使用有效 Token 发送 PUT /api/services/1，body: { title: '更新后标题' }",
+            "验证返回 code=0",
+            "使用有效 Token 发送 DELETE /api/services/1",
+            "验证返回 code=0 且该服务不再出现在列表中"
+          ],
+          "status": "pending"
+        }
+      ],
+      "dependencies": [
+        "T002"
+      ],
+      "attempts": 0,
+      "status": "pending",
+      "notes": []
+    },
+    {
+      "id": "T006",
+      "title": "后端新闻模块 API",
+      "category": "functional",
+      "priority": "high",
+      "description": "实现新闻 CRUD API：GET /api/news（前台已发布列表，后台全量列表）、GET /api/news/:id（详情）、POST /api/news（新增）、PUT /api/news/:id（编辑）、DELETE /api/news/:id（删除）",
+      "acceptance_criteria": [
+        {
+          "id": "AC001",
+          "description": "前台仅获取已发布新闻",
+          "steps": [
+            "发送 GET /api/news 无需 Token",
+            "验证返回的列表中所有新闻 is_published=1",
+            "验证按 created_at 降序排列"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC002",
+          "description": "后台获取全部新闻含草稿",
+          "steps": [
+            "使用有效 Token 发送 GET /api/news",
+            "验证返回列表包含 is_published=0 的草稿新闻"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC003",
+          "description": "后台新增新闻并发布",
+          "steps": [
+            "使用有效 Token 发送 POST /api/news，body: { title: '测试新闻', content: '<p>内容</p>', is_published: 1 }",
+            "验证返回 code=0 且 data.id 存在",
+            "前台获取列表验证新新闻出现"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC004",
+          "description": "编辑新闻时 updated_at 自动更新",
+          "steps": [
+            "使用有效 Token 发送 PUT /api/news/1，body: { title: '更新标题' }",
+            "验证返回 code=0",
+            "获取该新闻详情，验证 updated_at 不等于 created_at"
+          ],
+          "status": "pending"
+        }
+      ],
+      "dependencies": [
+        "T002"
+      ],
+      "attempts": 0,
+      "status": "pending",
+      "notes": []
+    },
+    {
+      "id": "T007",
+      "title": "后端轮播图模块 API",
+      "category": "functional",
+      "priority": "high",
+      "description": "实现轮播图 CRUD API：GET /api/banners（前台活跃列表）、POST /api/banners（新增）、PUT /api/banners/:id（编辑）、DELETE /api/banners/:id（删除）",
+      "acceptance_criteria": [
+        {
+          "id": "AC001",
+          "description": "前台获取活跃轮播图并按排序展示",
+          "steps": [
+            "发送 GET /api/banners 无需 Token",
+            "验证返回的列表仅包含 is_active=1 的数据",
+            "验证按 sort_order 降序排列"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC002",
+          "description": "后台 CRUD 轮播图",
+          "steps": [
+            "使用 Token POST /api/banners 新增轮播图，验证返回 code=0",
+            "使用 Token PUT /api/banners/:id 修改标题，验证返回 code=0",
+            "使用 Token DELETE /api/banners/:id 删除，验证返回 code=0"
+          ],
+          "status": "pending"
+        }
+      ],
+      "dependencies": [
+        "T002"
+      ],
+      "attempts": 0,
+      "status": "pending",
+      "notes": []
+    },
+    {
+      "id": "T008",
+      "title": "后端站点设置与仪表盘 API",
+      "category": "functional",
+      "priority": "high",
+      "description": "实现 GET/PUT /api/settings 站点设置接口，实现 GET /api/dashboard/stats 仪表盘统计接口",
+      "acceptance_criteria": [
+        {
+          "id": "AC001",
+          "description": "获取站点设置",
+          "steps": [
+            "发送 GET /api/settings 无需 Token",
+            "验证返回 code=0 且 data 包含 site_name, site_desc, phone, address, about, seo_title, seo_keywords, seo_description 字段"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC002",
+          "description": "更新站点设置",
+          "steps": [
+            "使用 Token PUT /api/settings，body: { site_name: '测试公司', phone: '400-000-0000' }",
+            "验证返回 code=0",
+            "再次 GET /api/settings 验证字段已更新"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC003",
+          "description": "仪表盘统计数据正确",
+          "steps": [
+            "使用 Token GET /api/dashboard/stats",
+            "验证返回 data 包含 unread_messages, total_messages, total_news, published_news, total_services, active_services 字段",
+            "验证数值与数据库实际记录一致"
+          ],
+          "status": "pending"
+        }
+      ],
+      "dependencies": [
+        "T002"
+      ],
+      "attempts": 0,
+      "status": "pending",
+      "notes": []
+    },
+    {
+      "id": "T009",
+      "title": "后台 CMS 项目初始化",
+      "category": "infrastructure",
+      "priority": "high",
+      "description": "使用 Vite 初始化 Vue 3 后台项目，安装 Element Plus + Vue Router + Axios，配置路由守卫和 axios 拦截器（自动携带 Token，401 自动跳转登录），实现 Layout 组件（侧边栏+头部+内容区）和 Login 页面",
+      "acceptance_criteria": [
+        {
+          "id": "AC001",
+          "description": "后台项目可以正常启动",
+          "steps": [
+            "进入 admin/ 目录",
+            "运行 npm install && npm run dev",
+            "访问 http://localhost:5173/admin/ 显示登录页面"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC002",
+          "description": "登录功能正常",
+          "steps": [
+            "访问 /admin/login，输入正确用户名密码",
+            "点击登录，验证跳转到 /admin/dashboard",
+            "验证 LocalStorage 中存储了 Token"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC003",
+          "description": "路由守卫拦截未登录访问",
+          "steps": [
+            "清除 LocalStorage 中的 Token",
+            "访问 /admin/dashboard",
+            "验证自动跳转到 /admin/login"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC004",
+          "description": "Layout 侧边栏导航正常",
+          "steps": [
+            "登录后进入后台",
+            "验证侧边栏显示：仪表盘、轮播图管理、服务管理、新闻管理、留言管理、站点设置",
+            "点击各菜单项验证路由跳转正确"
+          ],
+          "status": "pending"
+        }
+      ],
+      "dependencies": [
+        "T002"
+      ],
+      "attempts": 0,
+      "status": "pending",
+      "notes": []
+    },
+    {
+      "id": "T010",
+      "title": "后台仪表盘页面",
+      "category": "functional",
+      "priority": "medium",
+      "description": "实现 /admin/dashboard 仪表盘页面，展示 4 个统计卡片（未读留言数、总留言数、文章数、服务数），未读留言卡片显示红色角标，点击未读留言跳转留言管理页",
+      "acceptance_criteria": [
+        {
+          "id": "AC001",
+          "description": "统计卡片数据正确展示",
+          "steps": [
+            "登录后台，进入仪表盘页面",
+            "验证页面显示 4 个统计卡片",
+            "验证卡片数值与 API 返回数据一致"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC002",
+          "description": "未读留言角标和跳转",
+          "steps": [
+            "当存在未读留言时，验证未读留言卡片显示红色角标数字",
+            "点击未读留言卡片，验证跳转到 /admin/messages"
+          ],
+          "status": "pending"
+        }
+      ],
+      "dependencies": [
+        "T008",
+        "T009"
+      ],
+      "attempts": 0,
+      "status": "pending",
+      "notes": []
+    },
+    {
+      "id": "T011",
+      "title": "后台轮播图管理页面",
+      "category": "functional",
+      "priority": "high",
+      "description": "实现 /admin/banners 轮播图管理页面，包含轮播图列表表格（图片预览、标题、排序、状态）、新增/编辑弹窗（含图片上传）、删除确认、启用/禁用切换",
+      "acceptance_criteria": [
+        {
+          "id": "AC001",
+          "description": "轮播图列表展示",
+          "steps": [
+            "进入轮播图管理页面",
+            "验证表格显示图片缩略图、标题、排序值、启用状态",
+            "验证数据与数据库一致"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC002",
+          "description": "新增轮播图",
+          "steps": [
+            "点击新增按钮，弹出表单弹窗",
+            "上传图片，填写标题和排序值",
+            "点击确定，验证列表刷新出现新轮播图"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC003",
+          "description": "编辑和删除轮播图",
+          "steps": [
+            "点击某条轮播图的编辑按钮，弹窗显示当前数据",
+            "修改标题后保存，验证列表中数据更新",
+            "点击删除按钮，确认后验证该条从列表消失"
+          ],
+          "status": "pending"
+        }
+      ],
+      "dependencies": [
+        "T007",
+        "T009"
+      ],
+      "attempts": 0,
+      "status": "pending",
+      "notes": []
+    },
+    {
+      "id": "T012",
+      "title": "后台服务管理页面",
+      "category": "functional",
+      "priority": "high",
+      "description": "实现 /admin/services 服务管理页面，包含服务列表表格、新增/编辑弹窗（标题、图标上传、简介、详情富文本、排序、启用状态）、删除确认",
+      "acceptance_criteria": [
+        {
+          "id": "AC001",
+          "description": "服务列表展示",
+          "steps": [
+            "进入服务管理页面",
+            "验证表格显示服务标题、图标缩略图、简介、排序、启用状态"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC002",
+          "description": "新增服务",
+          "steps": [
+            "点击新增按钮，弹出表单弹窗",
+            "填写标题、简介，上传图标，编辑详情",
+            "点击确定，验证列表刷新出现新服务"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC003",
+          "description": "编辑和删除服务",
+          "steps": [
+            "点击编辑按钮，弹窗回显当前数据",
+            "修改后保存，验证列表数据更新",
+            "点击删除，确认后验证从列表消失"
+          ],
+          "status": "pending"
+        }
+      ],
+      "dependencies": [
+        "T005",
+        "T009"
+      ],
+      "attempts": 0,
+      "status": "pending",
+      "notes": []
+    },
+    {
+      "id": "T013",
+      "title": "后台新闻管理页面",
+      "category": "functional",
+      "priority": "high",
+      "description": "实现 /admin/news 新闻管理页面，包含新闻列表表格（标题、封面、发布状态、时间）、新增/编辑弹窗（标题、封面上传、富文本正文、发布状态）、删除确认、发布/撤回操作",
+      "acceptance_criteria": [
+        {
+          "id": "AC001",
+          "description": "新闻列表展示",
+          "steps": [
+            "进入新闻管理页面",
+            "验证表格显示标题、封面缩略图、发布状态标签、创建时间"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC002",
+          "description": "新增新闻并发布",
+          "steps": [
+            "点击新增按钮，弹出表单弹窗",
+            "填写标题、上传封面、编辑正文、勾选发布",
+            "点击确定，验证列表刷新出现新新闻且状态为已发布"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC003",
+          "description": "编辑新闻和切换发布状态",
+          "steps": [
+            "点击编辑按钮，弹窗回显当前数据",
+            "修改标题后保存，验证列表更新",
+            "点击发布/撤回按钮，验证状态切换"
+          ],
+          "status": "pending"
+        }
+      ],
+      "dependencies": [
+        "T006",
+        "T009"
+      ],
+      "attempts": 0,
+      "status": "pending",
+      "notes": []
+    },
+    {
+      "id": "T014",
+      "title": "后台留言管理页面",
+      "category": "functional",
+      "priority": "high",
+      "description": "实现 /admin/messages 留言管理页面，包含留言列表表格（姓名、电话、内容、状态、时间）、分页、标记已处理操作、留言详情展示",
+      "acceptance_criteria": [
+        {
+          "id": "AC001",
+          "description": "留言列表展示和分页",
+          "steps": [
+            "进入留言管理页面",
+            "验证表格显示姓名、电话、内容摘要、处理状态、时间",
+            "验证分页器正常工作"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC002",
+          "description": "标记留言已处理",
+          "steps": [
+            "找到一条未处理留言（状态显示'待处理'）",
+            "点击标记按钮",
+            "验证状态变为'已处理'，样式变灰"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC003",
+          "description": "留言详情查看",
+          "steps": [
+            "点击某条留言的查看按钮",
+            "验证展示完整留言内容（姓名、电话、内容全文、时间）"
+          ],
+          "status": "pending"
+        }
+      ],
+      "dependencies": [
+        "T004",
+        "T009"
+      ],
+      "attempts": 0,
+      "status": "pending",
+      "notes": []
+    },
+    {
+      "id": "T015",
+      "title": "后台站点设置页面",
+      "category": "functional",
+      "priority": "medium",
+      "description": "实现 /admin/settings 站点设置页面，包含表单：站点名称、站点描述、联系电话、公司地址、公司介绍（富文本）、SEO 标题、SEO 关键词、SEO 描述，保存后立即生效",
+      "acceptance_criteria": [
+        {
+          "id": "AC001",
+          "description": "设置表单回显当前值",
+          "steps": [
+            "进入站点设置页面",
+            "验证所有表单字段回显当前数据库中的值"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC002",
+          "description": "保存设置成功",
+          "steps": [
+            "修改站点名称为'测试公司名'",
+            "点击保存按钮",
+            "验证显示保存成功提示",
+            "刷新页面验证数据持久化"
+          ],
+          "status": "pending"
+        }
+      ],
+      "dependencies": [
+        "T008",
+        "T009"
+      ],
+      "attempts": 0,
+      "status": "pending",
+      "notes": []
+    },
+    {
+      "id": "T016",
+      "title": "前台官网项目初始化",
+      "category": "infrastructure",
+      "priority": "high",
+      "description": "使用 Vite 初始化 Vue 3 前台项目，配置 Vue Router，封装 axios 请求模块，实现 Navbar 和 Footer 组件，配置响应式基础样式",
+      "acceptance_criteria": [
+        {
+          "id": "AC001",
+          "description": "前台项目可以正常启动",
+          "steps": [
+            "进入 web/ 目录",
+            "运行 npm install && npm run dev",
+            "访问 http://localhost:5173/ 显示页面框架（导航栏+内容区+页脚）"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC002",
+          "description": "Navbar 导航和响应式汉堡菜单",
+          "steps": [
+            "桌面端验证导航栏显示 Logo + 菜单项（首页/服务/动态/留言）",
+            "缩小浏览器到手机宽度，验证菜单变为汉堡图标",
+            "点击汉堡图标，验证展开导航菜单"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC003",
+          "description": "路由配置正确",
+          "steps": [
+            "访问 / 显示首页组件",
+            "访问 /services 显示服务列表组件",
+            "访问 /news 显示新闻列表组件",
+            "访问 /contact 显示留言页组件"
+          ],
+          "status": "pending"
+        }
+      ],
+      "dependencies": [
+        "T001"
+      ],
+      "attempts": 0,
+      "status": "pending",
+      "notes": []
+    },
+    {
+      "id": "T017",
+      "title": "前台首页",
+      "category": "functional",
+      "priority": "high",
+      "description": "实现首页 / 四个区块：轮播图（BannerCarousel 组件）、公司简介（从 settings 读取）、热门服务（ServiceCard 卡片列表）、最新动态（NewsCard 卡片列表），每个区块带区块标题",
+      "acceptance_criteria": [
+        {
+          "id": "AC001",
+          "description": "轮播图区块正常展示",
+          "steps": [
+            "访问首页 /",
+            "验证轮播图区域展示图片",
+            "验证自动播放（3秒切换）",
+            "验证底部圆点指示器可点击切换"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC002",
+          "description": "公司简介区块展示",
+          "steps": [
+            "访问首页 /",
+            "验证公司简介区块显示站点名称和站点描述"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC003",
+          "description": "热门服务和最新动态区块",
+          "steps": [
+            "访问首页 /",
+            "验证热门服务区块显示服务卡片列表",
+            "验证最新动态区块显示新闻卡片列表",
+            "点击某服务卡片，验证跳转到 /services/:id",
+            "点击某新闻卡片，验证跳转到 /news/:id"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC004",
+          "description": "首页响应式适配",
+          "steps": [
+            "桌面端：验证服务/新闻卡片多列网格布局",
+            "手机端（<768px）：验证卡片单列堆叠布局",
+            "验证轮播图高度在手机端缩小"
+          ],
+          "status": "pending"
+        }
+      ],
+      "dependencies": [
+        "T005",
+        "T006",
+        "T007",
+        "T008",
+        "T016"
+      ],
+      "attempts": 0,
+      "status": "pending",
+      "notes": []
+    },
+    {
+      "id": "T018",
+      "title": "前台服务列表和服务详情页",
+      "category": "functional",
+      "priority": "high",
+      "description": "实现 /services 服务列表页（卡片网格布局）和 /services/:id 服务详情页（标题+图标+详细介绍+咨询引导按钮）",
+      "acceptance_criteria": [
+        {
+          "id": "AC001",
+          "description": "服务列表页展示",
+          "steps": [
+            "访问 /services",
+            "验证显示服务卡片网格（图标+标题+简介）",
+            "验证数据从 API 获取"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC002",
+          "description": "服务详情页展示",
+          "steps": [
+            "从服务列表点击某服务",
+            "验证跳转到 /services/:id",
+            "验证页面显示服务标题、图标、详细介绍",
+            "验证页面底部有'立即咨询'按钮"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC003",
+          "description": "咨询按钮跳转",
+          "steps": [
+            "点击'立即咨询'按钮",
+            "验证跳转到 /contact 在线留言页"
+          ],
+          "status": "pending"
+        }
+      ],
+      "dependencies": [
+        "T005",
+        "T016"
+      ],
+      "attempts": 0,
+      "status": "pending",
+      "notes": []
+    },
+    {
+      "id": "T019",
+      "title": "前台新闻列表和新闻详情页",
+      "category": "functional",
+      "priority": "high",
+      "description": "实现 /news 新闻列表页（卡片列表：封面+标题+日期）和 /news/:id 新闻详情页（标题+封面+正文+返回按钮）",
+      "acceptance_criteria": [
+        {
+          "id": "AC001",
+          "description": "新闻列表页展示",
+          "steps": [
+            "访问 /news",
+            "验证显示新闻卡片列表（封面图+标题+日期）",
+            "验证仅显示已发布的新闻"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC002",
+          "description": "新闻详情页展示",
+          "steps": [
+            "从新闻列表点击某新闻",
+            "验证跳转到 /news/:id",
+            "验证页面显示标题、封面图、正文内容、发布时间"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC003",
+          "description": "返回列表和空状态",
+          "steps": [
+            "在详情页点击'返回列表'按钮，验证回到 /news",
+            "当无已发布新闻时，验证列表页显示'暂无动态'提示"
+          ],
+          "status": "pending"
+        }
+      ],
+      "dependencies": [
+        "T006",
+        "T016"
+      ],
+      "attempts": 0,
+      "status": "pending",
+      "notes": []
+    },
+    {
+      "id": "T020",
+      "title": "前台在线留言页",
+      "category": "functional",
+      "priority": "high",
+      "description": "实现 /contact 在线留言页面，包含留言表单（姓名、电话、需求描述）和公司联系方式展示（电话、地址），表单验证和提交",
+      "acceptance_criteria": [
+        {
+          "id": "AC001",
+          "description": "留言表单和公司信息展示",
+          "steps": [
+            "访问 /contact",
+            "验证页面左侧/上方显示留言表单（姓名、电话、需求描述输入框+提交按钮）",
+            "验证页面右侧/下方显示公司联系方式（从 settings 获取的电话和地址）"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC002",
+          "description": "表单验证和提交成功",
+          "steps": [
+            "姓名为空时，验证显示'请输入姓名'错误提示",
+            "电话格式不正确时，验证显示'请输入正确电话'错误提示",
+            "内容为空时，验证显示'请输入留言内容'错误提示",
+            "填写完整有效信息后提交，验证显示'我们将尽快联系您'成功提示",
+            "验证提交后表单清空"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC003",
+          "description": "手机端响应式布局",
+          "steps": [
+            "在手机宽度（<768px）下访问 /contact",
+            "验证表单和联系方式纵向堆叠显示",
+            "验证输入框和按钮宽度自适应"
+          ],
+          "status": "pending"
+        }
+      ],
+      "dependencies": [
+        "T004",
+        "T008",
+        "T016"
+      ],
+      "attempts": 0,
+      "status": "pending",
+      "notes": []
+    },
+    {
+      "id": "T021",
+      "title": "SEO meta 标签动态渲染",
+      "category": "functional",
+      "priority": "medium",
+      "description": "前台页面根据 settings 表的 seo_title、seo_keywords、seo_description 动态渲染 <head> 中的 meta 标签，每个页面可设置不同的 title",
+      "acceptance_criteria": [
+        {
+          "id": "AC001",
+          "description": "首页 SEO meta 正确渲染",
+          "steps": [
+            "访问首页 /",
+            "查看页面源码，验证 <title> 为 settings 中的 seo_title",
+            "验证 <meta name='keywords'> 为 settings 中的 seo_keywords",
+            "验证 <meta name='description'> 为 settings 中的 seo_description"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC002",
+          "description": "其他页面有独立 title",
+          "steps": [
+            "访问 /services，验证 title 包含'服务'或'服务介绍'",
+            "访问 /news，验证 title 包含'新闻'或'动态'",
+            "访问 /contact，验证 title 包含'留言'或'联系我们'"
+          ],
+          "status": "pending"
+        }
+      ],
+      "dependencies": [
+        "T008",
+        "T016"
+      ],
+      "attempts": 0,
+      "status": "pending",
+      "notes": []
+    },
+    {
+      "id": "T022",
+      "title": "后台留言未读角标通知",
+      "category": "functional",
+      "priority": "medium",
+      "description": "后台侧边栏'留言管理'菜单项显示未读留言数量角标，仪表盘留言卡片显示角标，每次进入后台或刷新时从 API 获取最新未读数",
+      "acceptance_criteria": [
+        {
+          "id": "AC001",
+          "description": "侧边栏角标显示未读数",
+          "steps": [
+            "有未读留言时登录后台",
+            "验证侧边栏'留言管理'菜单项右侧显示红色数字角标",
+            "角标数字与 dashboard/stats 返回的 unread_messages 一致"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC002",
+          "description": "角标随留言状态更新",
+          "steps": [
+            "进入留言管理，标记所有留言为已处理",
+            "返回仪表盘或刷新页面",
+            "验证角标数字更新或消失"
+          ],
+          "status": "pending"
+        }
+      ],
+      "dependencies": [
+        "T008",
+        "T009",
+        "T014"
+      ],
+      "attempts": 0,
+      "status": "pending",
+      "notes": []
+    },
+    {
+      "id": "T023",
+      "title": "部署配置",
+      "category": "infrastructure",
+      "priority": "medium",
+      "description": "编写 Nginx 配置文件（前台静态托管 + 后台 SPA + API 反向代理 + uploads 静态服务），编写 init.sh 初始化脚本，确保一键启动",
+      "acceptance_criteria": [
+        {
+          "id": "AC001",
+          "description": "Nginx 配置正确",
+          "steps": [
+            "验证 nginx.conf 中 / 路径指向前台 dist 目录",
+            "验证 /admin 路径指向后台 dist 目录且 try_files 配置正确",
+            "验证 /api 路径反向代理到 Express :3000",
+            "验证 /uploads 路径指向 uploads 目录"
+          ],
+          "status": "pending"
+        },
+        {
+          "id": "AC002",
+          "description": "前后台构建成功",
+          "steps": [
+            "在 web/ 目录运行 npm run build，验证 dist 目录生成",
+            "在 admin/ 目录运行 npm run build，验证 dist 目录生成"
+          ],
+          "status": "pending"
+        }
+      ],
+      "dependencies": [
+        "T017",
+        "T015"
+      ],
+      "attempts": 0,
+      "status": "pending",
+      "notes": []
+    }
+  ],
+  "statistics": {
+    "total": 23,
+    "pending": 19,
+    "in_progress": 0,
+    "completed": 4,
+    "blocked": 0,
+    "needs_human": 0
+  }
+}
