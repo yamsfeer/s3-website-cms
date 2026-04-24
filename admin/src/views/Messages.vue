@@ -16,10 +16,12 @@
         </template>
       </el-table-column>
       <el-table-column prop="created_at" label="时间" width="160" />
-      <el-table-column label="操作" width="150" fixed="right">
+      <el-table-column label="操作" width="180" fixed="right">
         <template #default="{ row }">
-          <el-button size="small" @click="handleView(row)">查看</el-button>
-          <el-button v-if="!row.is_read" size="small" type="primary" @click="handleMarkRead(row)">标记已处理</el-button>
+          <div class="action-buttons">
+            <el-button size="small" @click="handleView(row)">查看</el-button>
+            <el-button v-if="!row.is_read" size="small" type="primary" @click="handleMarkRead(row)">标记已处理</el-button>
+          </div>
         </template>
       </el-table-column>
     </el-table>
@@ -98,4 +100,5 @@ onMounted(() => { loadMessages() })
 <style scoped>
 .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 .page-title { font-size: 20px; font-weight: 600; margin: 0; }
+.action-buttons { display: flex; align-items: center; gap: 8px; }
 </style>

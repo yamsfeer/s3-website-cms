@@ -74,48 +74,6 @@ async function handleSubmit() {
 .contact-form {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
-}
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
-}
-.form-label {
-  font-size: var(--font-size-small);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-primary);
-}
-.form-input {
-  padding: 12px 16px;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  font-size: var(--font-size-body);
-  transition: border-color 0.2s ease;
-  width: 100%;
-}
-.form-input:focus {
-  border-color: var(--color-primary);
-}
-.form-textarea {
-  resize: vertical;
-  min-height: 100px;
-}
-.form-error {
-  font-size: var(--font-size-small);
-  color: var(--color-danger);
-  margin-top: 2px;
-}
-.form-success {
-  font-size: var(--font-size-body);
-  color: var(--color-secondary);
-  text-align: center;
-  padding: var(--spacing-md);
-  background: rgba(16, 185, 129, 0.1);
-  border-radius: 8px;
-}
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+  gap: var(--space-md);
 }
 </style>

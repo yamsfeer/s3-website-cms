@@ -33,7 +33,7 @@
         <el-menu-item index="/messages">
           <el-icon><ChatDotRound /></el-icon>
           <span>留言管理</span>
-          <el-badge v-if="unreadCount > 0" :value="unreadCount" class="menu-badge" />
+          <span v-if="unreadCount > 0" class="menu-badge">{{ unreadCount }}</span>
         </el-menu-item>
         <el-menu-item index="/settings">
           <el-icon><Setting /></el-icon>
@@ -167,9 +167,22 @@ onMounted(() => {
   border-right: none;
 }
 
+.sidebar-menu .el-menu-item {
+  position: relative;
+}
+
 .menu-badge {
-  margin-left: auto;
-  margin-right: 8px;
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #f56c6c;
+  color: #fff;
+  font-size: 12px;
+  line-height: 1;
+  padding: 3px 7px;
+  border-radius: 10px;
+  white-space: nowrap;
 }
 
 .layout-header {

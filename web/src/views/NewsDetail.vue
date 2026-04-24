@@ -47,39 +47,60 @@ onMounted(() => {
 .detail-card {
   max-width: 800px;
   margin: 0 auto;
-  background: var(--color-bg-white);
-  border-radius: 12px;
-  padding: var(--spacing-2xl);
+  background: var(--bg-white);
+  border-radius: 8px;
+  padding: var(--space-3xl);
+  box-shadow: var(--shadow-card);
 }
+
 .detail-cover {
   width: 100%;
-  height: 300px;
+  height: 320px;
   object-fit: cover;
   border-radius: 8px;
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: var(--space-xl);
 }
+
 .detail-title {
-  font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
-  margin-bottom: var(--spacing-sm);
+  font-family: var(--font-display);
+  font-size: var(--fs-tile);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.022em;
+  color: var(--text-dark);
+  margin-bottom: var(--space-sm);
 }
+
 .detail-date {
-  font-size: var(--font-size-small);
-  color: var(--color-text-muted);
-  margin-bottom: var(--spacing-xl);
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+  margin-bottom: var(--space-xl);
+  letter-spacing: -0.01em;
 }
+
 .detail-content {
-  font-size: var(--font-size-body);
-  color: var(--color-text-primary);
+  font-size: var(--fs-body);
+  color: var(--text-dark);
   line-height: 1.8;
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: var(--space-xl);
 }
+
 .detail-content :deep(p) {
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--space-md);
 }
+
 .detail-content :deep(img) {
   max-width: 100%;
   border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+  .detail-card {
+    padding: var(--space-xl);
+  }
+
+  .detail-cover {
+    height: 200px;
+  }
 }
 </style>

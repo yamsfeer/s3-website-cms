@@ -6,14 +6,14 @@ export default defineConfig({
   plugins: [vue()],
   base: '/admin/',
   server: {
-    port: 5173,
+    port: 8033,
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+        target: 'http://localhost:8031',
         changeOrigin: true
       },
       '/uploads': {
-        target: 'http://localhost:3000',
+        target: 'http://localhost:8031',
         changeOrigin: true
       }
     }

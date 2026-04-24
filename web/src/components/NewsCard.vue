@@ -4,7 +4,11 @@
       <img :src="news.cover" :alt="news.title" />
     </div>
     <div class="news-card__cover news-card__cover--placeholder" v-else>
-      📰
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="3" width="18" height="18" rx="2"/>
+        <circle cx="8.5" cy="8.5" r="1.5"/>
+        <path d="M21 15l-5-5L5 21"/>
+      </svg>
     </div>
     <div class="news-card__content">
       <h3 class="news-card__title">{{ news.title }}</h3>
@@ -28,55 +32,70 @@ function formatDate(dateStr) {
 <style scoped>
 .news-card {
   display: block;
-  background: var(--color-bg-white);
-  border-radius: 12px;
+  background: var(--bg-white);
+  border-radius: 8px;
   overflow: hidden;
   text-decoration: none;
-  transition: all 0.3s ease;
-  border: 1px solid var(--color-border);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: none;
 }
+
 .news-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card);
 }
+
+.news-card:hover .news-card__cover img {
+  transform: scale(1.03);
+}
+
 .news-card__cover {
   width: 100%;
-  height: 160px;
+  height: 180px;
   overflow: hidden;
 }
+
 .news-card__cover img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  transition: transform 0.4s ease;
 }
-.news-card:hover .news-card__cover img {
-  transform: scale(1.05);
-}
+
 .news-card__cover--placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-primary-light);
-  font-size: 48px;
+  background: var(--bg-gray);
+  color: var(--text-muted);
 }
+
+.news-card__cover--placeholder svg {
+  width: 40px;
+  height: 40px;
+}
+
 .news-card__content {
-  padding: var(--spacing-md) var(--spacing-lg);
+  padding: var(--space-md) var(--space-lg);
 }
+
 .news-card__title {
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-primary);
-  margin-bottom: var(--spacing-xs);
+  font-size: var(--fs-body);
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: var(--space-xs);
   line-height: 1.4;
+  letter-spacing: -0.022em;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
+
 .news-card__date {
-  font-size: var(--font-size-tiny);
-  color: var(--color-text-muted);
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+  letter-spacing: -0.01em;
 }
 </style>

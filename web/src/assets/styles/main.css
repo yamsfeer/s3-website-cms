@@ -1,83 +1,81 @@
 /**
  * 万家官网管家 - 前台全局样式
- * 基于设计系统规范：颜色、字体、间距、响应式断点
+ * Apple Design System 规范
  */
 
 /* ========================================
-   CSS 变量 - 颜色方案
+   CSS 变量 - 颜色方案 (Apple Style)
    ======================================== */
 :root {
-  /* 主色 */
-  --color-primary: #2563EB;
-  --color-primary-dark: #1D4ED8;
-  --color-primary-light: #EFF6FF;
-
-  /* 语义色 */
-  --color-secondary: #10B981;
-  --color-warning: #F59E0B;
-  --color-danger: #EF4444;
-
-  /* 文字色 */
-  --color-text-primary: #111827;
-  --color-text-secondary: #6B7280;
-  --color-text-muted: #9CA3AF;
-  --color-text-white: #FFFFFF;
+  /* Apple Blue - 唯一强调色，仅用于交互元素 */
+  --apple-blue: #0071e3;
+  --apple-blue-hover: #0077ed;
+  --apple-blue-light: #e8f4fd;
 
   /* 背景色 */
-  --color-bg-white: #FFFFFF;
-  --color-bg-gray: #F9FAFB;
-  --color-bg-dark: #1F2937;
+  --bg-white: #ffffff;
+  --bg-gray: #f5f5f7;
+  --bg-black: #000000;
 
-  /* 边框色 */
-  --color-border: #E5E7EB;
+  /* 文字色 */
+  --text-dark: #1d1d1f;
+  --text-secondary: rgba(0, 0, 0, 0.56);
+  --text-muted: rgba(0, 0, 0, 0.4);
+  --text-white: #ffffff;
+  --text-white-secondary: rgba(255, 255, 255, 0.8);
+
+  /* 边框 */
+  --border-light: rgba(0, 0, 0, 0.08);
+
+  /* 阴影 - Apple 风格：柔和、弥散 */
+  --shadow-card: rgba(0, 0, 0, 0.12) 0px 4px 24px 0px;
+  --shadow-nav: 0 1px 0 rgba(0, 0, 0, 0.08);
+
+  /* 深色表面 */
+  --surface-dark: #272729;
+  --surface-darker: #1d1d1f;
 }
 
 /* ========================================
    CSS 变量 - 字体规范
    ======================================== */
 :root {
-  --font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
-  --font-mono: "SF Mono", "Consolas", monospace;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
-  --font-size-hero: 36px;
-  --font-size-section-title: 28px;
-  --font-size-card-title: 20px;
-  --font-size-body: 16px;
-  --font-size-small: 14px;
-  --font-size-tiny: 12px;
-
-  --font-weight-bold: 700;
-  --font-weight-semibold: 600;
-  --font-weight-regular: 400;
+  /* 字号层级 */
+  --fs-hero: 56px;
+  --fs-section: 40px;
+  --fs-tile: 28px;
+  --fs-card: 21px;
+  --fs-nav: 12px;
+  --fs-body: 17px;
+  --fs-small: 14px;
+  --fs-micro: 12px;
 }
 
 /* ========================================
    CSS 变量 - 间距系统
    ======================================== */
 :root {
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
-  --spacing-2xl: 48px;
-  --spacing-3xl: 64px;
-}
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+  --space-4xl: 80px;
+  --space-5xl: 100px;
 
-/* ========================================
-   CSS 变量 - 响应式断点（供 JS 读取）
-   ======================================== */
-:root {
-  --breakpoint-mobile: 768px;
-  --breakpoint-tablet: 1024px;
+  --nav-height: 48px;
+  --content-max: 980px;
 }
 
 /* ========================================
    全局重置
    ======================================== */
-*,
-*::before,
-*::after {
+*, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -90,24 +88,25 @@ html {
 }
 
 body {
-  font-family: var(--font-family);
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-regular);
-  line-height: 1.6;
-  color: var(--color-text-primary);
-  background-color: var(--color-bg-white);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  font-weight: 400;
+  line-height: 1.47059;
+  color: var(--text-dark);
+  background-color: var(--bg-white);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.022em;
 }
 
 a {
-  color: var(--color-primary);
+  color: var(--apple-blue);
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: opacity 0.2s ease;
 }
 
 a:hover {
-  color: var(--color-primary-dark);
+  opacity: 0.8;
 }
 
 img {
@@ -135,109 +134,156 @@ input, textarea, select {
 }
 
 /* ========================================
-   通用工具类
+   内容区容器
    ======================================== */
-
-/* 内容区容器 */
 .container {
   width: 100%;
-  max-width: 1200px;
+  max-width: var(--content-max);
   margin: 0 auto;
-  padding: 0 var(--spacing-md);
+  padding: 0 var(--space-lg);
 }
 
-@media (min-width: 768px) {
-  .container {
-    padding: 0 var(--spacing-lg);
-  }
-}
-
-/* 区块通用样式 */
+/* ========================================
+   区块通用样式 - Apple 风格
+   ======================================== */
 .section {
-  padding: var(--spacing-2xl) 0;
+  padding: var(--space-4xl) 0;
+}
+
+.section--dark {
+  background-color: var(--bg-black);
+  color: var(--text-white);
+}
+
+.section--dark .section__title {
+  color: var(--text-white);
+}
+
+.section--dark .section__subtitle {
+  color: var(--text-white-secondary);
 }
 
 .section--gray {
-  background-color: var(--color-bg-gray);
+  background-color: var(--bg-gray);
 }
 
 .section__title {
-  font-size: var(--font-size-section-title);
-  font-weight: var(--font-weight-bold);
+  font-family: var(--font-display);
+  font-size: var(--fs-section);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.022em;
   text-align: center;
-  margin-bottom: var(--spacing-xl);
-  color: var(--color-text-primary);
+  margin-bottom: var(--space-md);
+  color: var(--text-dark);
 }
 
 .section__subtitle {
-  font-size: var(--font-size-body);
-  color: var(--color-text-secondary);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  font-weight: 400;
+  line-height: 1.47059;
+  letter-spacing: -0.022em;
   text-align: center;
-  margin-top: calc(var(--spacing-sm) * -1);
-  margin-bottom: var(--spacing-xl);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-2xl);
 }
 
-/* 按钮样式 */
+/* ========================================
+   按钮样式 - Apple 风格
+   ======================================== */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 24px;
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-semibold);
-  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: var(--fs-small);
+  font-weight: 400;
+  border-radius: 980px;
   transition: all 0.2s ease;
   cursor: pointer;
-  border: none;
+  text-decoration: none;
   line-height: 1.5;
+  white-space: nowrap;
 }
 
 .btn--primary {
-  background-color: var(--color-primary);
-  color: var(--color-text-white);
+  background-color: var(--apple-blue);
+  color: var(--text-white);
 }
 
 .btn--primary:hover {
-  background-color: var(--color-primary-dark);
+  background-color: var(--apple-blue-hover);
+  opacity: 1;
+}
+
+.btn--dark {
+  background-color: var(--text-dark);
+  color: var(--text-white);
+}
+
+.btn--dark:hover {
+  background-color: #000;
+  opacity: 1;
 }
 
 .btn--outline {
   background-color: transparent;
-  color: var(--color-primary);
-  border: 1px solid var(--color-primary);
+  color: var(--apple-blue);
+  border: 1px solid var(--apple-blue);
 }
 
 .btn--outline:hover {
-  background-color: var(--color-primary-light);
+  background-color: var(--apple-blue-light);
+  opacity: 1;
+}
+
+.btn--white-outline {
+  background-color: transparent;
+  color: var(--text-white);
+  border: 1px solid var(--text-white);
+}
+
+.btn--white-outline:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  opacity: 1;
 }
 
 .btn--lg {
-  padding: 12px 32px;
-  font-size: var(--font-size-body);
+  padding: 12px 24px;
+  font-size: var(--fs-body);
 }
 
 .btn--block {
   width: 100%;
 }
 
-/* 卡片样式 */
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ========================================
+   卡片样式 - Apple 风格
+   ======================================== */
 .card {
-  background-color: var(--color-bg-white);
+  background-color: var(--bg-white);
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
   overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card);
 }
 
-/* 网格布局 */
+/* ========================================
+   网格布局
+   ======================================== */
 .grid {
   display: grid;
-  gap: var(--spacing-lg);
+  gap: var(--space-lg);
 }
 
 .grid--2 {
@@ -273,35 +319,44 @@ input, textarea, select {
   }
 }
 
-/* 页面顶部间距 */
+/* ========================================
+   页面通用样式
+   ======================================== */
 .page {
-  padding-top: var(--spacing-2xl);
-  padding-bottom: var(--spacing-2xl);
+  padding-top: var(--space-3xl);
+  padding-bottom: var(--space-3xl);
 }
 
 .page__title {
-  font-size: var(--font-size-section-title);
-  font-weight: var(--font-weight-bold);
+  font-family: var(--font-display);
+  font-size: var(--fs-section);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.022em;
   text-align: center;
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: var(--space-md);
+  color: var(--text-dark);
 }
 
-/* 空状态 */
+/* ========================================
+   空状态
+   ======================================== */
 .empty-state {
   text-align: center;
-  padding: var(--spacing-3xl) 0;
-  color: var(--color-text-muted);
-  font-size: var(--font-size-body);
+  padding: var(--space-3xl) 0;
+  color: var(--text-muted);
+  font-size: var(--fs-body);
 }
 
-/* 文字截断 */
+/* ========================================
+   文字截断
+   ======================================== */
 .text-ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* 多行截断 */
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -314,4 +369,120 @@ input, textarea, select {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* ========================================
+   表单样式
+   ======================================== */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.form-label {
+  font-size: var(--fs-small);
+  font-weight: 600;
+  color: var(--text-dark);
+  letter-spacing: -0.016em;
+}
+
+.form-input {
+  padding: 12px 16px;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  font-size: var(--fs-body);
+  font-family: var(--font-body);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  background: var(--bg-white);
+  color: var(--text-dark);
+  letter-spacing: -0.022em;
+}
+
+.form-input:focus {
+  border-color: var(--apple-blue);
+  box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-error {
+  font-size: var(--fs-small);
+  color: #dc2626;
+  margin-top: 2px;
+}
+
+.form-success {
+  font-size: var(--fs-body);
+  color: #1d1d1f;
+  text-align: center;
+  padding: var(--space-md);
+  background: var(--bg-gray);
+  border-radius: 8px;
+}
+
+/* ========================================
+   详情页通用样式
+   ======================================== */
+.detail-card {
+  max-width: 800px;
+  margin: 0 auto;
+  background: var(--bg-white);
+  border-radius: 8px;
+  padding: var(--space-3xl);
+}
+
+.detail-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-tile);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.022em;
+  color: var(--text-dark);
+  margin-bottom: var(--space-sm);
+}
+
+.detail-content {
+  font-size: var(--fs-body);
+  color: var(--text-dark);
+  line-height: 1.8;
+  margin-bottom: var(--space-xl);
+}
+
+.detail-content :deep(p) {
+  margin-bottom: var(--space-md);
+}
+
+.detail-content :deep(img) {
+  max-width: 100%;
+  border-radius: 8px;
+}
+
+.detail-actions {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+/* ========================================
+   响应式
+   ======================================== */
+@media (max-width: 768px) {
+  :root {
+    --fs-hero: 32px;
+    --fs-section: 28px;
+    --fs-tile: 24px;
+  }
+
+  .section {
+    padding: var(--space-3xl) 0;
+  }
+
+  .detail-card {
+    padding: var(--space-xl);
+  }
 }

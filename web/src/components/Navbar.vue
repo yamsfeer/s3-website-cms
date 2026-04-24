@@ -1,9 +1,13 @@
 <template>
   <nav class="navbar" :class="{ 'navbar--scrolled': isScrolled }">
-    <div class="navbar__inner container">
+    <div class="navbar__inner">
       <!-- Logo -->
       <router-link to="/" class="navbar__logo" @click="closeMenu">
-        <span class="navbar__logo-icon">🏠</span>
+        <svg class="navbar__logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
         <span class="navbar__logo-text">万家官网管家</span>
       </router-link>
 
@@ -61,7 +65,6 @@ const route = useRoute()
 const isScrolled = ref(false)
 const isMobileMenuOpen = ref(false)
 
-// 导航菜单项
 const menuItems = [
   { label: '首页', path: '/' },
   { label: '服务', path: '/services' },
@@ -69,10 +72,6 @@ const menuItems = [
   { label: '留言', path: '/contact' }
 ]
 
-/**
- * 判断菜单项是否激活
- * 首页精确匹配，其他前缀匹配
- */
 function isActive(path) {
   if (path === '/') {
     return route.path === '/'
@@ -80,17 +79,14 @@ function isActive(path) {
   return route.path.startsWith(path)
 }
 
-/** 切换手机端菜单 */
 function toggleMenu() {
   isMobileMenuOpen.value = !isMobileMenuOpen.value
 }
 
-/** 关闭手机端菜单 */
 function closeMenu() {
   isMobileMenuOpen.value = false
 }
 
-/** 监听滚动，添加导航栏阴影效果 */
 function handleScroll() {
   isScrolled.value = window.scrollY > 10
 }
@@ -111,39 +107,49 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   z-index: 1000;
-  background-color: var(--color-bg-white);
-  transition: box-shadow 0.3s ease;
+  height: var(--nav-height);
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  transition: background 0.3s ease;
 }
 
 .navbar--scrolled {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-nav);
 }
 
 .navbar__inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 64px;
+  height: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 0 var(--space-lg);
 }
 
 /* Logo */
 .navbar__logo {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
-  color: var(--color-text-primary);
-  font-size: 20px;
-  font-weight: var(--font-weight-bold);
+  gap: var(--space-sm);
+  color: var(--text-white);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.016em;
   text-decoration: none;
   flex-shrink: 0;
+  transition: opacity 0.2s ease;
 }
 
 .navbar__logo:hover {
-  color: var(--color-primary);
+  opacity: 0.8;
 }
 
 .navbar__logo-icon {
-  font-size: 28px;
+  width: 18px;
+  height: 18px;
+  color: var(--text-white);
 }
 
 .navbar__logo-text {
@@ -154,33 +160,27 @@ onUnmounted(() => {
 .navbar__menu {
   display: none;
   align-items: center;
-  gap: var(--spacing-xl);
+  gap: var(--space-xl);
 }
 
 .navbar__menu-link {
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-regular);
+  color: var(--text-white);
+  font-size: var(--fs-nav);
+  font-weight: 400;
+  letter-spacing: -0.01em;
   text-decoration: none;
-  padding: var(--spacing-sm) 0;
-  transition: color 0.2s ease;
+  padding: 4px 0;
+  transition: opacity 0.2s ease;
   position: relative;
+  opacity: 0.8;
 }
 
-.navbar__menu-link:hover,
+.navbar__menu-link:hover {
+  opacity: 1;
+}
+
 .navbar__menu-link--active {
-  color: var(--color-primary);
-}
-
-.navbar__menu-link--active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background-color: var(--color-primary);
-  border-radius: 1px;
+  opacity: 1;
 }
 
 /* 汉堡菜单按钮 */
@@ -189,26 +189,26 @@ onUnmounted(() => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   gap: 5px;
   cursor: pointer;
   border: none;
   background: none;
-  padding: 8px;
+  padding: 6px;
 }
 
 .navbar__hamburger-line {
   display: block;
-  width: 22px;
-  height: 2px;
-  background-color: var(--color-text-primary);
+  width: 18px;
+  height: 1.5px;
+  background-color: var(--text-white);
   border-radius: 1px;
   transition: all 0.3s ease;
 }
 
 .navbar__hamburger--active .navbar__hamburger-line:nth-child(1) {
-  transform: translateY(7px) rotate(45deg);
+  transform: translateY(6.5px) rotate(45deg);
 }
 
 .navbar__hamburger--active .navbar__hamburger-line:nth-child(2) {
@@ -216,22 +216,27 @@ onUnmounted(() => {
 }
 
 .navbar__hamburger--active .navbar__hamburger-line:nth-child(3) {
-  transform: translateY(-7px) rotate(-45deg);
+  transform: translateY(-6.5px) rotate(-45deg);
 }
 
 /* 手机端菜单面板 */
 .navbar__mobile-menu {
-  background-color: var(--color-bg-white);
-  border-top: 1px solid var(--color-border);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  position: absolute;
+  top: var(--nav-height);
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .navbar__mobile-list {
-  padding: var(--spacing-sm) 0;
+  padding: var(--space-md) var(--space-lg);
 }
 
 .navbar__mobile-item {
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .navbar__mobile-item:last-child {
@@ -240,17 +245,18 @@ onUnmounted(() => {
 
 .navbar__mobile-link {
   display: block;
-  padding: var(--spacing-md) var(--spacing-lg);
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-body);
+  padding: var(--space-md) 0;
+  color: var(--text-white);
+  font-size: var(--fs-body);
+  font-weight: 400;
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: opacity 0.2s ease;
+  opacity: 0.8;
 }
 
 .navbar__mobile-link:hover,
 .navbar__mobile-link--active {
-  color: var(--color-primary);
-  background-color: var(--color-primary-light);
+  opacity: 1;
 }
 
 /* 桌面端显示桌面菜单，隐藏汉堡按钮 */

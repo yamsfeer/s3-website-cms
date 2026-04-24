@@ -48,7 +48,7 @@ onMounted(() => {
 
 <style scoped>
 .main-content {
-  min-height: calc(100vh - 64px - 200px);
-  margin-top: 64px;
+  min-height: calc(100vh - var(--nav-height) - 280px);
+  margin-top: var(--nav-height);
 }
 </style>

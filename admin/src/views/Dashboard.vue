@@ -5,7 +5,7 @@
     <!-- 统计卡片 -->
     <el-row :gutter="20" class="stats-row">
       <el-col :xs="24" :sm="12" :lg="6">
-        <el-card class="stat-card stat-card--danger" shadow="hover" @click="goToMessages">
+        <el-card class="stat-card stat-card--danger" shadow="never" @click="goToMessages">
           <div class="stat-content">
             <div class="stat-icon"><el-icon size="32"><ChatDotRound /></el-icon></div>
             <div class="stat-info">
@@ -18,7 +18,7 @@
       </el-col>
 
       <el-col :xs="24" :sm="12" :lg="6">
-        <el-card class="stat-card" shadow="hover">
+        <el-card class="stat-card" shadow="never">
           <div class="stat-content">
             <div class="stat-icon"><el-icon size="32"><ChatLineRound /></el-icon></div>
             <div class="stat-info">
@@ -30,7 +30,7 @@
       </el-col>
 
       <el-col :xs="24" :sm="12" :lg="6">
-        <el-card class="stat-card" shadow="hover">
+        <el-card class="stat-card" shadow="never">
           <div class="stat-content">
             <div class="stat-icon"><el-icon size="32"><Document /></el-icon></div>
             <div class="stat-info">
@@ -42,7 +42,7 @@
       </el-col>
 
       <el-col :xs="24" :sm="12" :lg="6">
-        <el-card class="stat-card" shadow="hover">
+        <el-card class="stat-card" shadow="never">
           <div class="stat-content">
             <div class="stat-icon"><el-icon size="32"><Service /></el-icon></div>
             <div class="stat-info">

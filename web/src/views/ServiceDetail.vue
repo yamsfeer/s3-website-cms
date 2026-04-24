@@ -3,7 +3,16 @@
     <div class="container">
       <div v-if="service" class="detail-card">
         <div class="detail-header">
-          <img v-if="service.icon" :src="service.icon" :alt="service.title" class="detail-icon" />
+          <div class="detail-icon" v-if="service.icon">
+            <img :src="service.icon" :alt="service.title" />
+          </div>
+          <div class="detail-icon detail-icon--placeholder" v-else>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+              <path d="M2 17l10 5 10-5"/>
+              <path d="M2 12l10 5 10-5"/>
+            </svg>
+          </div>
           <h1 class="detail-title">{{ service.title }}</h1>
         </div>
         <p class="detail-summary">{{ service.summary }}</p>
@@ -44,44 +53,75 @@ onMounted(() => {
 .detail-card {
   max-width: 800px;
   margin: 0 auto;
-  background: var(--color-bg-white);
-  border-radius: 12px;
-  padding: var(--spacing-2xl);
+  background: var(--bg-white);
+  border-radius: 8px;
+  padding: var(--space-3xl);
+  box-shadow: var(--shadow-card);
 }
+
 .detail-header {
   display: flex;
   align-items: center;
-  gap: var(--spacing-lg);
-  margin-bottom: var(--spacing-lg);
+  gap: var(--space-lg);
+  margin-bottom: var(--space-lg);
 }
+
 .detail-icon {
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+}
+
+.detail-icon img {
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 }
+
+.detail-icon--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-gray);
+  color: var(--apple-blue);
+  border-radius: 50%;
+}
+
+.detail-icon--placeholder svg {
+  width: 28px;
+  height: 28px;
+}
+
 .detail-title {
-  font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
+  font-family: var(--font-display);
+  font-size: var(--fs-tile);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.022em;
+  color: var(--text-dark);
 }
+
 .detail-summary {
-  font-size: var(--font-size-body);
-  color: var(--color-text-secondary);
-  margin-bottom: var(--spacing-xl);
-  line-height: 1.8;
+  font-size: var(--fs-body);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-xl);
+  line-height: 1.6;
 }
+
 .detail-content {
-  font-size: var(--font-size-body);
-  color: var(--color-text-primary);
+  font-size: var(--fs-body);
+  color: var(--text-dark);
   line-height: 1.8;
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: var(--space-xl);
 }
+
 .detail-content :deep(p) {
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--space-md);
 }
+
 .detail-actions {
   display: flex;
-  gap: var(--spacing-md);
+  gap: var(--space-md);
   flex-wrap: wrap;
 }
 </style>

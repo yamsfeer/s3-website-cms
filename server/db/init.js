@@ -119,9 +119,9 @@ function initDatabase() {
   console.log('[DB] 数据库初始化完成');
 }
 
+module.exports = { getDb, initTables, initDatabase };
+
 // 直接运行时执行初始化
 if (require.main === module) {
   initDatabase();
 }
-
-module.exports = { getDb, initTables, initDatabase };

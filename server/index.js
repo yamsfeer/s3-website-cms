@@ -25,7 +25,7 @@ const dashboardRoutes = require('./routes/dashboard');
 const { notFoundHandler, errorHandler } = require('./middleware/error');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8031;
 
 // ========================================
 // 中间件

@@ -36,13 +36,15 @@ onMounted(() => {
 .service-grid {
   display: grid;
   grid-template-columns: repeat(1, 1fr);
-  gap: var(--spacing-lg);
+  gap: var(--space-lg);
 }
+
 @media (min-width: 768px) {
   .service-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
 @media (min-width: 1024px) {
   .service-grid {
     grid-template-columns: repeat(3, 1fr);
